@@ -25,11 +25,12 @@ require "os"
 require "io"
 require "math"
 require "table"
-
-version="0.1"
 changedir("./projects/xbs-3")
+json=require "json"
 dofile("ui.lua")
 dofile("mus.lua")
+--metadatas variables
+version="0.1"
 --the fighter class
 fighter={health=50,speed=100,name="unnamed",attack=0,defence=0,moves={}}
 --here come the various move scripts. Since there are so many of them and due to the way they are organized, I have sorted them into various files (mv_xxx.lua)
@@ -37,7 +38,15 @@ moves={}
 dofile("mv_basics.lua")
 --two tables: the roster are all the currently available fighters, and can be saved and returned.. The fighters, on the other hand, are something that is curently in play.
 fighters={}
+f=io.open("roster.json","r")
+file=f:read("*a")
+if file==nil then
 roster={}
+else
+roster=json.decode(file)
+speak(""..#roster.." fighte(s) loaded from your json file")
+end
+f:close()
 --fighter's manipulation functions
 --this function creates a new fighter and returns it's table object. Then, it can be placed either in the fighters or roster tables, or in a completely other table if you like for custom moves and scripts.
 function newfighter(o) 
@@ -107,7 +116,15 @@ end
 table.insert(mm,"new...")
 table.insert(mm,"back")
 r=runmenu(w,mm)
-if r==#m+2 then return end
+if r==#m+2 then
+if #m>0 then
+f=io.open("roster.json","w")
+f:write(json.encode(roster))
+f:close()
+speak(""..#m.." fighters automatically written to disk")
+end
+return
+end
 if r==#m+1 then
 nf=newfighter()
 table.insert(m,deepcopy(nf))
