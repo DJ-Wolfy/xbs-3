@@ -27,7 +27,7 @@ require "math"
 require "table"
 
 version="0.1"
-changedir("./projects/xbs3")
+changedir("./projects/xbs-3")
 dofile("ui.lua")
 dofile("mus.lua")
 --the fighter class
@@ -50,6 +50,7 @@ end
 --this here function is for a user interface which help with modification of fighters.
 function modfighter(w,m)
 while true do
+speak("Variable modifier. Please select something to modify.")
 mv=""
 for i,j in pairs(m.moves) do
 mv=mv..i+". "
