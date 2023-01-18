@@ -38,33 +38,34 @@ moves={}
 dofile("mv_basics.lua")
 --two tables: the roster are all the currently available fighters, and can be saved and returned.. The fighters, on the other hand, are something that is curently in play.
 fighters={}
-f=io.open("roster.json","r")
-file=f:read("*a")
-if file==nil then
 roster={}
-else
+f=io.open("roster.json","r")
+if f~=nil then
+file=f:read("*a")
+if file~=nil then
 roster=json.decode(file)
-speak(""..#roster.." fighte(s) loaded from your json file")
+speak(""..#roster.." fighter(s) loaded from your json file")
 end
 f:close()
+end
 --fighter's manipulation functions
 --this function creates a new fighter and returns it's table object. Then, it can be placed either in the fighters or roster tables, or in a completely other table if you like for custom moves and scripts.
 function newfighter(o) 
 if o==nil then 
-o={health=50,speed=100,name="unnamed",moves={},attack=0,defence=0,team="unset"} 
+o={health=50,speed=100,name="unnamed",moves={},attack=0,defence=0,team="unset",control="ai"} 
 end 
 setmetatable(o,{__index=fighter}) 
 return o 
 end
 --this here function is for a user interface which help with modification of fighters.
-function modfighter(w,m)
+function modfighter(w,m,parent,index)
 while true do
 speak("Variable modifier. Please select something to modify.")
 mv=""
 for i,j in pairs(m.moves) do
 mv=mv..i+". "
 end
-r=runmenu(w,{"name: "..m.name,"health: "..m.health,"speed: "..m.speed,"attack: "..m.attack,"defence: "..m.defence,"team: "..m.team,"moves: "..mv,"finished"})
+r=runmenu(w,{"name: "..m.name,"health: "..m.health,"speed: "..m.speed,"attack: "..m.attack,"defence: "..m.defence,"team: "..m.team,"moves: "..mv,"controller: "..m.control,"remove fighter","finished"})
 if r==1 then
 speak("Please enter the name of this fighter, for example, the mighty warrior. Spaces are allowed.")
 m.name=runedit(w)
@@ -90,7 +91,21 @@ if r==6 then
 speak("Please enter the team of a fighter. For example: the warrior's alliance.")
 m.team=runedit(w)
 end
+if r==9 then
+if parent==nil then
+speak("You can't delete this fighter, as it is not in any parent field (roster or playfield for instance)")
+else
+table.remove(parent,index)
+speak("Done!")
+return--no more fighter, ref is nil. Errors if we continue!
+end
+end
 if r==8 then
+opt={"human","ai"}
+speak("Select one of these two options")
+m.control=opt[runmenu(w,opt)]
+end
+if r==10 then
 if m.name=="unnamed" then speak("Sorry, but you can't exit out of this field if your fighter has no name!") else speak("Done!") return end
 end
 end
@@ -117,21 +132,19 @@ table.insert(mm,"new...")
 table.insert(mm,"back")
 r=runmenu(w,mm)
 if r==#m+2 then
-if #m>0 then
 f=io.open("roster.json","w")
 f:write(json.encode(roster))
 f:close()
-speak(""..#m.." fighters automatically written to disk")
-end
+speak("Roster saved!")
 return
 end
 if r==#m+1 then
 nf=newfighter()
 table.insert(m,deepcopy(nf))
-modfighter(w,m[#m])
+modfighter(w,m[#m],roster,#m)
 end
 if r<#m+1 then
-modfighter(w,m[r])
+modfighter(w,m[r],roster,r)
 end
 end
 end
