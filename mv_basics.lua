@@ -1,11 +1,11 @@
 moves["punch"]={
-name="punch",
+name="Punch",
 play=function()
 speak("Do nothing!")
 end
 }
 moves["kick"]={
-name="kick",
+name="Kick",
 play=function()
 speak("Ow, that hurt a lot!")
 end
