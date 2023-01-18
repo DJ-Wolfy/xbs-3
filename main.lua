@@ -100,6 +100,32 @@ speak("Done!")
 return--no more fighter, ref is nil. Errors if we continue!
 end
 end
+if r==7 then
+while true do
+mvm={}
+for i,j in pairs(moves) do
+checked="Unchecked"
+if m.moves[j.name]~=nil then
+checked="checked"
+end
+mvm[#mvm+1]=j.name..". "..checked
+end
+speak("Move menu")
+lastm=runmenu(w,mvm,lastm)
+if lastm==#mvm+1 then
+if #m.moves>0 then
+break
+end
+end
+if m.moves[mvm[lastm]]==nil then
+m.moves[mvm[lastm]]=true
+speak("Checked.")
+else
+m.moves[mvm[lastm]]=nil
+speak("Unchecked.")
+end
+end
+end
 if r==8 then
 opt={"human","ai"}
 speak("Select one of these two options")
