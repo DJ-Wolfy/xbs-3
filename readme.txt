@@ -9,6 +9,6 @@ How to play?
 All menus are self explanatory and will teach you how to play as you go along. Other than, it's advised to look at move scripts to find out how they all work.
 
 credits
-Horizon audiogame Engine developed by DJWolfy (github SightlessWolf), Hidwood (Github hidwood), TheCoderPro (Github TheCoderProYT) and Haythem (Github Haythem256).
+Horizon audiogame Engine developed by DJWolfy (github DJ-Wolfy), Hidwood (Github hidwood), TheCoderPro (Github TheCoderProYT) and Haythem (Github Haythem256).
 This program makes use of json.lua, a library written by rxi
 The program includes sound design by PresidentLion, as well as music by Vindsvept.
