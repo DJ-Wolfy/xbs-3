@@ -25,6 +25,7 @@ require "os"
 require "io"
 require "math"
 require "table"
+require "string"
 changedir("./projects/xbs-3")
 json=require "json"
 dofile("ui.lua")
@@ -58,12 +59,40 @@ setmetatable(o,{__index=fighter})
 return o 
 end
 --this here function is for a user interface which help with modification of fighters.
-function modfighter(w,m,parent,index)
+function movemenu(w,m)
+speak("Check and uncheck the moves to set up your preferred move list.")
 while true do
+mvm={}
+mvmn={}
+for i,j in pairs(moves) do
+checked="Unchecked"
+if m.moves[j.name]~=nil then
+checked="Checked"
+end
+mvm[#mvm+1]=j.name..". "..checked
+mvmn[#mvm]=j.name
+end
+mvm[#mvm+1]="done"
+lastm=runmenu(w,mvm,lastm)
+if lastm==#mvm then
+speak("Done")
+return
+end
+if m.moves[mvmn[lastm]]==nil then
+m.moves[mvmn[lastm]]=true
+speak("Checked.")
+else
+m.moves[mvmn[lastm]]=nil
+speak("Unchecked.")
+end
+end
+end
+function modfighter(w,m,parent,index)
 speak("Variable modifier. Please select something to modify.")
+while true do
 mv=""
 for i,j in pairs(m.moves) do
-mv=mv..i+". "
+mv=mv..i..". "
 end
 r=runmenu(w,{"name: "..m.name,"health: "..m.health,"speed: "..m.speed,"attack: "..m.attack,"defence: "..m.defence,"team: "..m.team,"moves: "..mv,"controller: "..m.control,"remove fighter","finished"})
 if r==1 then
@@ -101,30 +130,7 @@ return--no more fighter, ref is nil. Errors if we continue!
 end
 end
 if r==7 then
-while true do
-mvm={}
-for i,j in pairs(moves) do
-checked="Unchecked"
-if m.moves[j.name]~=nil then
-checked="checked"
-end
-mvm[#mvm+1]=j.name..". "..checked
-end
-speak("Move menu")
-lastm=runmenu(w,mvm,lastm)
-if lastm==#mvm+1 then
-if #m.moves>0 then
-break
-end
-end
-if m.moves[mvm[lastm]]==nil then
-m.moves[mvm[lastm]]=true
-speak("Checked.")
-else
-m.moves[mvm[lastm]]=nil
-speak("Unchecked.")
-end
-end
+movemenu(w,m)
 end
 if r==8 then
 opt={"human","ai"}
@@ -132,7 +138,7 @@ speak("Select one of these two options")
 m.control=opt[runmenu(w,opt)]
 end
 if r==10 then
-if m.name=="unnamed" then speak("Sorry, but you can't exit out of this field if your fighter has no name!") else speak("Done!") return end
+if m.name=="unnamed" or len(m.moves)~=0 then speak("Sorry, but this fighter is not yet finished! If you made one by mistake or deleted all the moves, you need to add more.") else speak("Done!") return end
 end
 end
 end
