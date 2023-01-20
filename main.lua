@@ -32,6 +32,17 @@ dofile("ui.lua")
 dofile("mus.lua")
 --metadatas variables
 version="0.1"
+--core functions
+--we don't want the normal wait, it's slow and don't support our game loops that we need
+wait=nil
+function wait(timetowait,extra)
+timetowait=timetowait/1000
+e=elapsed()
+repeat
+w.loop()
+if extra~=nil then extra() end
+until elapsed()-e>timetowait
+end
 --the fighter class
 fighter={health=50,speed=100,name="unnamed",attack=0,defence=0,moves={}}
 --here come the various move scripts. Since there are so many of them and due to the way they are organized, I have sorted them into various files (mv_xxx.lua)
@@ -73,7 +84,7 @@ mvm[#mvm+1]=j.name..". "..checked
 mvmn[#mvm]=j.name
 end
 mvm[#mvm+1]="done"
-lastm=runmenu(w,mvm,lastm)
+local lastm=runmenu(w,mvm,lastm)
 if lastm==#mvm then
 speak("Done")
 return
@@ -94,7 +105,7 @@ mv=""
 for i,j in pairs(m.moves) do
 mv=mv..i..". "
 end
-r=runmenu(w,{"name: "..m.name,"health: "..m.health,"speed: "..m.speed,"attack: "..m.attack,"defence: "..m.defence,"team: "..m.team,"moves: "..mv,"controller: "..m.control,"remove fighter","finished"})
+local r=runmenu(w,{"name: "..m.name,"health: "..m.health,"speed: "..m.speed,"attack: "..m.attack,"defence: "..m.defence,"team: "..m.team,"moves: "..mv,"controller: "..m.control,"remove fighter","finished"})
 if r==1 then
 speak("Please enter the name of this fighter, for example, the mighty warrior. Spaces are allowed.")
 m.name=runedit(w)
@@ -142,8 +153,27 @@ if m.name=="unnamed" or len(m.moves)~=0 then speak("Sorry, but this fighter is n
 end
 end
 end
-
+--implementation of the smart-sound system that caches sounds in memory. When they are no longer in use, the game takes them back and re-uses them. Cool, huh?
+smartsounds={}
+function play(soundname,soundvol,soundpan)
+--these are because I'm used to PureBasic's way of handling sounds.
+soundvol=soundvol/100
+soundpan=soundpan/100
+spos=#smartsounds+1
+for i,j in pairs(smartsounds) do
+if j.name==soundname and j.stream.is_playing~=true then
+spos=i
+end
+end
+if spos==#smartsounds+1 then
+smartsounds[spos]={name=soundname,stream=sound(soundname)}
+end
+smartsounds[spos].stream.volume=soundvol
+smartsounds[spos].stream.pan=soundpan
+smartsounds[spos].stream.play()
+end
 --in-game functions
+--function to change stats of the fighters
 --function to calculate damage and returns it, speaking damage output
 function damage(dam)
 dam=dam+launcher.attack
@@ -162,7 +192,7 @@ table.insert(mm,j.name)
 end
 table.insert(mm,"new...")
 table.insert(mm,"back")
-r=runmenu(w,mm)
+local r=runmenu(w,mm)
 if r==#m+2 then
 f=io.open("roster.json","w")
 f:write(json.encode(roster))
@@ -187,12 +217,9 @@ return runmenu(w,{"roster","playfield","play","extras","exit"})
 end
 --initializing main code goes here
 w=newwindow("xtreme battle simulator 3 version "..version)
---logo=sound("xtreme games.ogg")
---logo.play()
---logotime=elapsed()
---repeat
---w.loop()
---until elapsed()-logotime>12.5
+logo=sound("xtreme games.ogg")
+logo.play()
+wait(12500,dlgplay)
 while true do
 r=mainmenu()
 if r==1 then modmenu(w,roster) end
