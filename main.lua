@@ -174,6 +174,21 @@ smartsounds[spos].stream.play()
 end
 --in-game functions
 --function to change stats of the fighters
+function stat(person,stat,amount,defaultamount)
+if defaultamount==nil then defaultamount=0 end
+if person[stat]==nil then person[stat]=defaultamount end
+person[stat]=person[stat]+amount
+if amount>0 then
+speak(person.name.."'s "..stat.." increases by "..amount)
+play("xsound/statup.ogg",50,0)
+wait(1300)
+end
+if amount<0 then
+speak(person.name.."'s "..stat.." decreases by "..tostring(-amount))
+play("xsound/statdown.ogg",50,0)
+wait(1400)
+end
+end
 --function to calculate damage and returns it, speaking damage output
 function damage(dam)
 dam=dam+launcher.attack
