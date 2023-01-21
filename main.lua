@@ -231,7 +231,7 @@ end
 function mainmenu()
 music("menumus.ogg")
 speak("Main menu. Please select an option.")
-return runmenu(w,{"roster","playfield","play","extras","exit"})
+return runmenu(w,{"set","play","extras","exit"})
 end
 --initializing main code goes here
 w=newwindow("xtreme battle simulator 3 version "..version)
@@ -250,7 +250,7 @@ end
 while true do
 r=mainmenu()
 if r==1 then modmenu(w,roster) end
-if r==5 then speak("thanks for playing!") wait(1) mus.free() return 4 end
+if r==4 then speak("thanks for playing!") wait(1) mus.free() return 4 end
 end
 end
 main()
