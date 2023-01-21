@@ -37,10 +37,13 @@ version="0.1"
 wait=nil
 function wait(timetowait,extra)
 timetowait=timetowait/1000
-e=elapsed()
+local e=elapsed()
 repeat
 w.loop()
-if extra~=nil then extra() end
+if extra~=nil then
+local ex=extra()
+if ex=="skip" then return end
+end
 until elapsed()-e>timetowait
 end
 --the fighter class
@@ -234,7 +237,16 @@ end
 w=newwindow("xtreme battle simulator 3 version "..version)
 logo=sound("xtreme games.ogg")
 logo.play()
-wait(12500,dlgplay)
+wait(12500,function()
+if w.pressed("enter")==1 then
+for fade=1,0.01,-0.01 do
+logo.volume=fade
+wait(5)
+end
+return "skip"
+end
+end
+)
 while true do
 r=mainmenu()
 if r==1 then modmenu(w,roster) end
