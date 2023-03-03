@@ -1,4 +1,23 @@
+require "math"
+require "table"
 --first, I will implement some code I found
+function GetRandomString(tbl)
+  local keys = {}
+  for x,y in pairs(tbl) do
+    table.insert(keys, x)
+  end
+  local randomIndex = keys[math.random(#keys)]
+  return randomIndex
+end
+
+
+function fix_array(inputarray)
+outputarray={}
+for i,j in pairs(inputarray) do
+table.insert(outputarray,j)
+end
+return outputarray
+end
 function deepcopy(orig, copies)
     copies = copies or {}
     local orig_type = type(orig)
@@ -24,10 +43,12 @@ function main()
 require "os"
 require "io"
 require "math"
-require "table"
+--don't require math and table here, already did it for other code
+
 require "string"
 changedir("./projects/xbs-3")
 json=require "json"
+math.randomseed(os.time())
 dofile("ui.lua")
 dofile("mus.lua")
 --metadatas variables
@@ -44,6 +65,7 @@ if extra~=nil then
 local ex=extra()
 if ex=="skip" then return end
 end
+check_for_music_volumes(w)
 until elapsed()-e>timetowait
 end
 --the fighter class
@@ -52,7 +74,7 @@ fighter={health=50,speed=100,name="unnamed",attack=0,defence=0,moves={}}
 moves={}
 dofile("mv_basics.lua")
 --two tables: the roster are all the currently available fighters, and can be saved and returned.. The fighters, on the other hand, are something that is curently in play.
-fighters={}
+playfield={}
 roster={}
 f=io.open("roster.json","r")
 if f~=nil then
@@ -159,6 +181,8 @@ end
 --implementation of the smart-sound system that caches sounds in memory. When they are no longer in use, the game takes them back and re-uses them. Cool, huh?
 smartsounds={}
 function play(soundname,soundvol,soundpan)
+if soundvol==nil then soundvol=50 end
+if soundpan==nil then soundpan=0 end
 --these are because I'm used to PureBasic's way of handling sounds.
 soundvol=soundvol/100
 soundpan=soundpan/100
@@ -194,9 +218,10 @@ end
 end
 --function to calculate damage and returns it, speaking damage output
 function damage(dam)
-dam=dam+launcher.attack
+dam=dam+attacker.attack
 dam=dam-target.defence
 if dam<0 then dam=0 end
+target.health=target.health-dam
 speak(target.name.." took "..dam.." damage!")
 return dam
 end
@@ -228,6 +253,87 @@ modfighter(w,m[r],roster,r)
 end
 end
 end
+function fight()
+speak("Please select fighters to add to the playfield")
+addto={}
+for i,j in pairs(roster) do
+table.insert(addto,j.name)
+end
+table.insert(addto,"done")
+
+speak(""..#addto)
+while true do
+r=runmenu(w,addto,0)
+if r==#addto then
+speak("All done!")
+break
+end
+table.insert(playfield,deepcopy(roster[r]))
+end
+--initialize temp vars that would be useless to save
+for i,j in pairs(playfield) do
+j.didnt_play=0
+end
+music("xsound/fightmus"..math.random(1,5)..".ogg")
+speak("Prepare for combat!")
+wait(1500)
+speak("Fight!")
+wait(1500)
+turn=0
+while true do
+turn=turn+1
+speak("Turn "..turn)
+play("xsound/turn.ogg",50,0)
+wait(1300)
+play("xsound/initiative.ogg",50,0)
+bestspeed=0
+for i,j in pairs(playfield) do
+j.didnt_play=j.didnt_play+1
+sr=math.random(1,j.speed)
+--if this fighter hasn't played recently, give them a bonus to their speed
+sr=sr+j.didnt_play*8
+if sr>bestspeed then
+attacker=j
+attacker.didnt_play=0
+bestspeed=sr
+end
+end
+speak(attacker.name.." has taken the initiative!")
+wait(1300)
+--complete move code
+move=""
+if attacker.control == "ai" then
+move=GetRandomString(attacker.moves)
+else
+speak("human move")
+end
+--convert this into it's true move form (ref)
+move=moves[move]
+speak(attacker.name.." used "..move.name.."!")
+if move.sound==nil then play("xsound/play.ogg") else play(move.sound) end
+--reset target var because we have a new move now
+target=nil
+if move.offensive~=nil then
+if attacker.control=="ai" then
+--simple for now replace with something else if you like
+repeat
+target=playfield[math.random(1,#playfield)]
+until target.team~=attacker.team
+end
+end
+wait(400)
+if target~=nil then move.play(attacker,target) else move.play(attacker) end
+wait(1000)
+--check for defeated fighters
+for i,j in pairs(playfield) do
+if j.health<1 then
+speak(j.name.." has been defeated and is out!")
+j=nil
+end
+end
+playfield=fix_array(playfield)
+end
+end
 function mainmenu()
 music("menumus.ogg")
 speak("Main menu. Please select an option.")
@@ -243,6 +349,7 @@ for fade=1,0.01,-0.01 do
 logo.volume=fade
 wait(5)
 end
+logo.stop()
 return "skip"
 end
 end
@@ -250,7 +357,8 @@ end
 while true do
 r=mainmenu()
 if r==1 then modmenu(w,roster) end
-if r==4 then speak("thanks for playing!") wait(1) mus.free() return 4 end
+if r==2 then fight() end
+if r==4 then speak("thanks for playing!") wait(1000) mus.free() return 4 end
 end
 end
 main()

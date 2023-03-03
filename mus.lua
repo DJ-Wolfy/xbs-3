@@ -1,5 +1,6 @@
 cmus=""
 function check_for_music_volumes(w)
+if mus~=nil then
 if w.pressed("lalt")==1 then
 speak(tostring(mus.volume))
 end
@@ -8,6 +9,7 @@ mus.volume=mus.volume +0.1
 end
 if mus.volume>=0.01 and w.pressed("pagedown")==1 then
 mus.volume=mus.volume-0.1
+end
 end
 end
 function music(mname)
