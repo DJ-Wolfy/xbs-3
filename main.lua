@@ -72,6 +72,10 @@ end
 fighter={health=50,speed=100,name="unnamed",attack=0,defence=0,moves={}}
 --here come the various move scripts. Since there are so many of them and due to the way they are organized, I have sorted them into various files (mv_xxx.lua)
 moves={}
+turn_start_triggers={}
+turn_end_triggers={}
+prefire_triggers={}
+postfire_triggers={}
 dofile("mv_basics.lua")
 --two tables: the roster are all the currently available fighters, and can be saved and returned.. The fighters, on the other hand, are something that is curently in play.
 playfield={}
@@ -109,16 +113,16 @@ mvm[#mvm+1]=j.name..". "..checked
 mvmn[#mvm]=j.name
 end
 mvm[#mvm+1]="done"
-local lastm=runmenu(w,mvm,lastm)
-if lastm==#mvm then
+local lastmenuposition=runmenu(w,mvm,lastm)
+if lastmenuposition==#mvm then
 speak("Done")
 return
 end
-if m.moves[mvmn[lastm]]==nil then
-m.moves[mvmn[lastm]]=true
+if m.moves[mvmn[lastmenuposition]]==nil then
+m.moves[mvmn[lastmenuposition]]=true
 speak("Checked.")
 else
-m.moves[mvmn[lastm]]=nil
+m.moves[mvmn[lastmenuposition]]=nil
 speak("Unchecked.")
 end
 end
@@ -213,7 +217,7 @@ end
 if amount<0 then
 speak(person.name.."'s "..stat.." decreases by "..tostring(-amount))
 play("xsound/statdown.ogg",50,0)
-wait(1400)
+wait(1100)
 end
 end
 --function to calculate damage and returns it, speaking damage output
@@ -221,6 +225,7 @@ function damage(dam)
 dam=dam+attacker.attack
 dam=dam-target.defence
 if dam<0 then dam=0 end
+target.lastdamage=dam
 target.health=target.health-dam
 speak(target.name.." took "..dam.." damage!")
 return dam
@@ -254,6 +259,7 @@ end
 end
 end
 function fight()
+playfield={}
 speak("Please select fighters to add to the playfield")
 addto={}
 for i,j in pairs(roster) do
@@ -261,7 +267,6 @@ table.insert(addto,j.name)
 end
 table.insert(addto,"done")
 
-speak(""..#addto)
 while true do
 r=runmenu(w,addto,0)
 if r==#addto then
@@ -269,12 +274,13 @@ speak("All done!")
 break
 end
 table.insert(playfield,deepcopy(roster[r]))
+speak("Added")
 end
 --initialize temp vars that would be useless to save
 for i,j in pairs(playfield) do
 j.didnt_play=0
 end
-music("xsound/fightmus"..math.random(1,5)..".ogg")
+music("fightmus.ogg")
 speak("Prepare for combat!")
 wait(1500)
 speak("Fight!")
@@ -294,18 +300,25 @@ sr=math.random(1,j.speed)
 sr=sr+j.didnt_play*8
 if sr>bestspeed then
 attacker=j
-attacker.didnt_play=0
 bestspeed=sr
 end
 end
+attacker.didnt_play=0
 speak(attacker.name.." has taken the initiative!")
+for i,j in pairs(turn_start_triggers) do
+j(attacker)
+end
 wait(1300)
---complete move code
 move=""
 if attacker.control == "ai" then
 move=GetRandomString(attacker.moves)
 else
-speak("human move")
+speak("select a move")
+ml={}
+for i,j in pairs(attacker.moves) do
+table.insert(ml,i)
+end
+move=ml[runmenu(w,ml)]
 end
 --convert this into it's true move form (ref)
 move=moves[move]
@@ -319,19 +332,60 @@ if attacker.control=="ai" then
 repeat
 target=playfield[math.random(1,#playfield)]
 until target.team~=attacker.team
+else
+speak("Select a target")
+ml={}
+for i,j in pairs(playfield) do
+if j.team~=attacker.team then
+table.insert(ml,j)
 end
 end
-wait(400)
-if target~=nil then move.play(attacker,target) else move.play(attacker) end
-wait(1000)
+ml2={}
+for i,j in ipairs(ml) do
+table.insert(ml2,j.name)
+end
+target=ml[runmenu(w,ml2)]
+end
+end
+trig=nil
+for i,j in pairs(prefire_triggers) do
+if j(move,attacker,target)==true then trig=true end
+end
+if trig==nil then if target~=nil then move.play(attacker,target) else move.play(attacker) end end
+for i,j in pairs(postfire_triggers) do
+j(move,attacker,target)
+
+end
+wait(600)
+for i,j in pairs(turn_end_triggers ) do
+j(l)
+end
 --check for defeated fighters
 for i,j in pairs(playfield) do
 if j.health<1 then
 speak(j.name.." has been defeated and is out!")
-j=nil
+--can't kill the fighter from ref (will reassign ref var). You have to do it directly
+playfield[i]=nil
+
 end
 end
 playfield=fix_array(playfield)
+sameteam=playfield[1].team
+over=1
+for i,j in pairs(playfield) do
+if j.team~=sameteam then over=0 end
+end
+if over==1 then
+speak("And the winner of the fight is...")
+wait(2500)
+if #playfield==1 then
+speak(playfield[1].name.."!")
+else
+speak(playfield[1].team.."!")
+end
+wait(1500)
+return
+end
 end
 end
 function mainmenu()
