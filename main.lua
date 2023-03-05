@@ -282,6 +282,26 @@ j.didnt_play=0
 end
 speak("Select a mode")
 mode=runmenu(w,{"classic mode"})
+if #playfield==0 then
+speak("You do not have any fighters. Cancelling.")
+return
+end
+if mode==1 then
+if #playfield==1 then
+speak("You only have 1 fighter. Classic mode needs at least 2. Cancelled.")
+return
+end
+st=playfield[1].team
+for i,j in ipairs(playfield) do
+if j.team~=st then
+changed=true
+end
+end
+if changed==nil then
+speak("All of your fighters are on the same team, and thus the fight can't start. Cancelled.")
+return
+end
+end
 music("fightmus.ogg")
 speak("Prepare for combat!")
 wait(1500)

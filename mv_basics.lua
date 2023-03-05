@@ -282,6 +282,7 @@ l.megamachineguncharge=3
 else
 wait(1500)
 speak("Fire!")
+l.megamachineguncharge=0
 wait(500)
 for i=1,6 do
 play("psound/handgrenade.wav")
