@@ -192,8 +192,8 @@ name="heal",
 sound="osound/magic.wav",
 play=function(l)
 regain=math.random(3,7)
-speak(launcher.name.." regained "..regain.." health!")
-launcher.health=launcher.health+regain
+speak(l.name.." regained "..regain.." health!")
+l.health=l.health+regain
 end
 }
 moves["poison bomb"]={
@@ -227,12 +227,14 @@ end
 end
 moves["parry"]={
 name="parry",
+secret=true,
 play=function(l)
-speak(l.name.." gets ready to parry attacks!")
-stat(l,"parrying",1)
-
-stat(l,"speed",-20)
+if l.parrying==0 or l.parrying==nil then
+l.parrying=1
+l.speed=l.speed-20
 end
+end
+
 }
 turn_start_triggers["parry"]=function(l)
 if l.parrying == 1 then
@@ -251,8 +253,15 @@ speak(t.name.." parried the attack!")
 play("psound/warhammer.wav")
 stat(t,"parrying",-1)
 stat(t,"defence",2)
+stat(t,"speed",12)
 return true
 end
 end
 return nil
 end
+moves["trick"]={
+name="trick",
+secret=true,
+play=function(l)
+end
+}

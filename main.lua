@@ -113,7 +113,7 @@ mvm[#mvm+1]=j.name..". "..checked
 mvmn[#mvm]=j.name
 end
 mvm[#mvm+1]="done"
-local lastmenuposition=runmenu(w,mvm,lastm)
+lastmenuposition=runmenu(w,mvm,lastmenuposition)
 if lastmenuposition==#mvm then
 speak("Done")
 return
@@ -280,6 +280,8 @@ end
 for i,j in pairs(playfield) do
 j.didnt_play=0
 end
+speak("Select a mode")
+mode=runmenu(w,{"classic mode"})
 music("fightmus.ogg")
 speak("Prepare for combat!")
 wait(1500)
@@ -322,7 +324,11 @@ move=ml[runmenu(w,ml)]
 end
 --convert this into it's true move form (ref)
 move=moves[move]
+if move.secret==true then
+speak(attacker.name.." used a secret move!")
+else
 speak(attacker.name.." used "..move.name.."!")
+end
 if move.sound==nil then play("xsound/play.ogg") else play(move.sound) end
 --reset target var because we have a new move now
 target=nil
