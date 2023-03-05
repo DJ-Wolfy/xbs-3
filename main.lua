@@ -134,33 +134,33 @@ mv=""
 for i,j in pairs(m.moves) do
 mv=mv..i..". "
 end
-local r=runmenu(w,{"name: "..m.name,"health: "..m.health,"speed: "..m.speed,"attack: "..m.attack,"defence: "..m.defence,"team: "..m.team,"moves: "..mv,"controller: "..m.control,"remove fighter","finished"})
-if r==1 then
+local varmod=runmenu(w,{"name: "..m.name,"health: "..m.health,"speed: "..m.speed,"attack: "..m.attack,"defence: "..m.defence,"team: "..m.team,"moves: "..mv,"controller: "..m.control,"remove fighter","finished"})
+if varmod==1 then
 speak("Please enter the name of this fighter, for example, the mighty warrior. Spaces are allowed.")
 m.name=runedit(w)
 if m.team=="unset" then m.team=m.name.."'s team" end
 end
-if r==2 then
+if varmod==2 then
 speak("Please enter the health of this fighter, or the amount of hit points it should have. This value should be a number above 0, and we recommend between 10 and 300 points.")
 m.health=tonumber(runedit(w))
 end
-if r==3 then
+if varmod==3 then
 speak("Please enter the speed for this fighter. It should be above 0 and we recommend a value between 50 and 100. The speed value controls how likely it is that the fighter will take initiative")
 m.speed=tonumber(runedit(w))
 end
-if r==4 then
+if varmod==4 then
 speak("Please enter the attack value for this fighter. It should be a number that calculates the amount of damage added onto attacks. We recommend a value between -15 and 15, but your safest bet is 0.")
 m.attack=tonumber(runedit(w))
 end
-if r==5 then
+if varmod==5 then
 speak("Please enter the defence value for this fighter. It should be a number that calculates the amount of damage removed from incoming attacks. We recommend a value between -15 and 15, but your safest bet is 0.")
 m.defence=tonumber(runedit(w))
 end
-if r==6 then
+if varmod==6 then
 speak("Please enter the team of a fighter. For example: the warrior's alliance.")
 m.team=runedit(w)
 end
-if r==9 then
+if varmod==9 then
 if parent==nil then
 speak("You can't delete this fighter, as it is not in any parent field (roster or playfield for instance)")
 else
@@ -169,15 +169,15 @@ speak("Done!")
 return--no more fighter, ref is nil. Errors if we continue!
 end
 end
-if r==7 then
+if varmod==7 then
 movemenu(w,m)
 end
-if r==8 then
+if varmod==8 then
 opt={"human","ai"}
 speak("Select one of these two options")
 m.control=opt[runmenu(w,opt)]
 end
-if r==10 then
+if varmod==10 then
 if m.name=="unnamed" or len(m.moves)~=0 then speak("Sorry, but this fighter is not yet finished! If you made one by mistake or deleted all the moves, you need to add more.") else speak("Done!") return end
 end
 end
@@ -268,12 +268,12 @@ end
 table.insert(addto,"done")
 
 while true do
-r=runmenu(w,addto,0)
-if r==#addto then
+adding=runmenu(w,addto,0)
+if adding==#addto then
 speak("All done!")
 break
 end
-table.insert(playfield,deepcopy(roster[r]))
+table.insert(playfield,deepcopy(roster[adding]))
 speak("Added")
 end
 --initialize temp vars that would be useless to save
