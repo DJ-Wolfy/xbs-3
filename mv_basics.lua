@@ -382,3 +382,24 @@ stat(l,"attack",1)
 stat(l,"defence",-1)
 end
 end
+moves["burn"]={
+name="burn",
+sound="xsound/fire.ogg",
+play=function(l)
+if l.burning==nil then
+l.burning=1
+speak(l.name.." begins to burn!")
+else
+speak(l.name.." took 4 damage!")
+l.health=l.health-4
+stat(l,"attack",1)
+end
+end
+}
+turn_end_triggers["burning"]=function(l)
+if l.burning==1 then
+speak(l.name.." took 4 damage!")
+l.health=l.health-4
+stat(l,"attack",1)
+end
+end
