@@ -92,8 +92,8 @@ play("xsound/jab.ogg",50,50-math.random(0,100))
 wait(math.random(110,130))
 end
 t.health=t.health-punches
-speak(l.name.." just punched "..t.name.." "..punches.." times!")
-stat(l,"speed",-12)
+speak(t.name.." took "..punches.." damage!")
+stat(l,"speed",-20)
 end
 }
 moves["circle"]={
@@ -263,5 +263,31 @@ moves["trick"]={
 name="trick",
 secret=true,
 play=function(l)
+end
+}
+moves["mega machinegun"]={
+name="mega machinegun",
+offensive=true,
+play=function(l,t)
+if l.megamachineguncharge==nil then l.megamachineguncharge=0 end
+if l.megamachineguncharge==0 then
+l.megamachineguncharge=1
+speak("charging up...")
+elseif l.megamachineguncharge==1 then
+l.megamachineguncharge=2
+speak("Activating...")
+elseif l.megamachineguncharge==2 then
+speak("Mega machinegun almost charged up!")
+l.megamachineguncharge=3
+else
+wait(1500)
+speak("Fire!")
+wait(500)
+for i=1,6 do
+play("psound/handgrenade.wav")
+damage(3)
+wait(500)
+end
+end
 end
 }
