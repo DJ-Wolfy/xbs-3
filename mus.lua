@@ -20,7 +20,7 @@ if mus~=nil then
 v=mus.volume
 for i=mus.volume,0,-0.01 do
 mus.volume=i
-wait(0.01)
+wait(0.1)
 end
 mus.stop()
 end

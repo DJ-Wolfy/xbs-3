@@ -101,6 +101,7 @@ end
 --this here function is for a user interface which help with modification of fighters.
 function movemenu(w,m)
 speak("Check and uncheck the moves to set up your preferred move list.")
+lastmenuposition=nil
 while true do
 mvm={}
 mvmn={}
@@ -386,7 +387,7 @@ j(move,attacker,target)
 end
 wait(600)
 for i,j in pairs(turn_end_triggers ) do
-j(l)
+j(attacker)
 end
 --check for defeated fighters
 for i,j in pairs(playfield) do

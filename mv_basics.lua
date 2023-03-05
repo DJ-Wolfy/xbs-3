@@ -1,3 +1,11 @@
+turn_start_triggers["balance"]=function(l)
+if l.balance~=nil and l.balance<0 then
+stat(l,"balance",1)
+stat(l,"defence",4)
+if l.balance==0 then speak(l.name.." regained their balance!") else speak(l.name.." is a little more balanced") end
+end
+end
+
 moves["light jab"]={
 name="light jab",
 sound="xsound/jab.ogg",
@@ -68,12 +76,8 @@ name="hook",
 sound="xsound/jab.ogg",
 offensive=true,
 play=function(l,t)
-damage(math.random(5,9))
-stat(l,"attack",-2)
-if math.random(1,3)==1 then
-speak(t.name.." has gotten a concussion!")
-stat(t,"defence",-4)
-end
+damage(math.random(5,15))
+stat(l,"attack",-3)
 end
 }
 moves["pummel"]={
@@ -217,6 +221,7 @@ turn_start_triggers["poisoned"]=function(l)
 if l.poison==nil then l.poison=-1 end
 if l.poison==0 then
 speak(l.name.."'s poison has worn off.")
+l.poison=-1
 elseif l.poison>0 then
 speak(l.name.." is poisoned!")
 l.health=l.health-3
@@ -292,3 +297,88 @@ end
 end
 end
 }
+moves["fist barrage"]={
+name="fist barrage",
+offensive=true,
+play=function(l,t)
+oldattack=l.attack
+olddefence=t.defence
+l.attack=math.floor(l.attack/3)
+t.defence=math.floor(t.defence*1.25)
+
+for i=1,math.random(2,5) do
+damage(1)
+play("psound/jab.wav")
+wait(math.random(200,300))
+end
+t.defence=olddefence
+l.attack=oldattack
+end
+}
+moves["dimensional shot"]={
+name="dimensional shot",
+sound="xsound/undead.ogg",
+offensive=true,
+play=function(l,t)
+olddefence=t.defence
+t.defence=t.attack
+t.attack=olddefence
+speak(t.name.."'s attack and defence are flipped!")
+damage(math.random(3,9))
+t.attack=t.defence
+t.defence=olddefence
+speak(t.name.."'s attack and defence flip back.")
+end
+}
+moves["feint attack"]={
+name="feint attack",
+offensive=true,
+play=function(l,t)
+if math.random(1,3)==1 then
+speak(t.name.." didn't fall the feint.")
+else
+speak(t.name.." is now off balance!")
+stat(t,"defence",-4)
+stat(t,"balance",-1)
+end
+stat(l,"attack",-2)
+end
+}
+moves["knockout hit"]={
+name="knockout hit",
+sound="xsound/kick.ogg",
+offensive=true,
+play=function(l,t)
+if math.random(1,3)==1 then
+speak(l.name.." completely missed!")
+else
+speak("Concussion time for "..t.name.."!")
+damage(math.random(9,15))
+stat(t,"defence",-7)
+stat(t,"balance",-1)
+stat(t,"speed",-12)
+end
+stat(l,"defence",-3)
+stat(l,"attack",-2)
+end
+}
+moves["rage"]={
+name="rage",
+sound="xsound/undead.ogg",
+play=function(l)
+if l.raging==nil then
+speak(l.name.." burns with rage!")
+l.raging=1
+else
+stat(l,"attack",2)
+stat(l,"defence",-2)
+speak(l.name.."'s wrath grows stronger!")
+end
+end
+}
+turn_end_triggers["rage"]=function(l)
+if l.raging~=nil then
+stat(l,"attack",1)
+stat(l,"defence",-1)
+end
+end
