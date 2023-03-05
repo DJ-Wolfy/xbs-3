@@ -112,7 +112,7 @@ end
 mvm[#mvm+1]=j.name..". "..checked
 mvmn[#mvm]=j.name
 end
-mvm[#mvm+1]="done"
+mvm[#mvm+1]="finished"
 lastmenuposition=runmenu(w,mvm,lastmenuposition)
 if lastmenuposition==#mvm then
 speak("Done")
@@ -239,7 +239,7 @@ for i,j in pairs(m) do
 table.insert(mm,j.name)
 end
 table.insert(mm,"new...")
-table.insert(mm,"back")
+table.insert(mm,"finished")
 local r=runmenu(w,mm)
 if r==#m+2 then
 f=io.open("roster.json","w")
@@ -260,7 +260,7 @@ end
 end
 function fight()
 playfield={}
-speak("Please select fighters to add to the playfield")
+speak("Please select fighters from the roster to add to the playfield")
 addto={}
 for i,j in pairs(roster) do
 table.insert(addto,j.name)
@@ -276,6 +276,8 @@ end
 table.insert(playfield,deepcopy(roster[adding]))
 speak("Added")
 end
+speak("Now you can modify the playfield however you like.")
+modmenu(w,playfield)
 --initialize temp vars that would be useless to save
 for i,j in pairs(playfield) do
 j.didnt_play=0

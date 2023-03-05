@@ -74,7 +74,7 @@ local t=0
 local did=false
 while true do
 w.loop()
-if multistring~="" and elapsed()-multitimer>=0.25 then
+if multistring~="" and elapsed()-multitimer>=0.15 then
 multistring=""
 end
 local l=letter(w)

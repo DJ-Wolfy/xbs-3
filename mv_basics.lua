@@ -246,7 +246,7 @@ stat(l,"parrying",-1)
 end
 end
 prefire_triggers["parry"]=function(m,l,t)
-if t~=nil then
+if t~=nil and move.secret~=true then
 if t.parrying == 1 then
 wait(120)
 speak(t.name.." parried the attack!")
