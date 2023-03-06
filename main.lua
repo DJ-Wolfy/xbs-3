@@ -232,6 +232,17 @@ speak(target.name.." took "..dam.." damage!")
 return dam
 end
 --menu functions
+function extras()
+speak("Extras menu. Please select an option.")
+command=runmenu(w,{"update the game"})
+if command==1 then
+speak("Checking server for updates...")
+os.execute("git fetch")
+speak("Updating the game, please wait...")
+os.execute("git pull")
+speak("Game updated successfully! Please restart the program for it to take effect.")
+end
+end
 function modmenu(w,m)
 while true do
 speak("Select a fighter to modify.")
@@ -441,6 +452,7 @@ while true do
 r=mainmenu()
 if r==1 then modmenu(w,roster) end
 if r==2 then fight() end
+if r==3 then extras() end
 if r==4 then speak("thanks for playing!") wait(1000) mus.free() return 4 end
 end
 end
