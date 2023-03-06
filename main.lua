@@ -52,7 +52,7 @@ math.randomseed(os.time())
 dofile("ui.lua")
 dofile("mus.lua")
 --metadatas variables
-version="0.1"
+version="0.1.1"
 --core functions
 --we don't want the normal wait, it's slow and don't support our game loops that we need
 wait=nil
@@ -236,11 +236,17 @@ function extras()
 speak("Extras menu. Please select an option.")
 command=runmenu(w,{"update the game"})
 if command==1 then
+speak("By updating, you will lose any unsaved changes you've made, so make sure any moves and sounds you've added are backed up before you update to the new version of the game. If you're ready to update, click continue, otherwise click cancel.")
+if runmenu(w,{"continue","cancel"})==1 then
+speak("getting ready for update...")
+os.execute("git stash")
+os.execute("git stash drop")
 speak("Checking server for updates...")
 os.execute("git fetch")
 speak("Updating the game, please wait...")
 os.execute("git pull")
 speak("Game updated successfully! Please restart the program for it to take effect.")
+end
 end
 end
 function modmenu(w,m)
