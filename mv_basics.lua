@@ -403,3 +403,23 @@ l.health=l.health-4
 stat(l,"attack",1)
 end
 end
+moves["bloodlust"]={
+name="bloodlust",
+play=function(l)
+if l.bloodlust==0 then
+l.blooddlust=1
+speak(l.name.." gets ready to fight!")
+else
+speak(l.name.." wants to fight!")
+if math.random(1,2)==1 then
+stat(l,"attack",2)
+end
+end
+end
+}
+turn_end_triggers["bloodlust"]=function(l)
+if l.bloodlust~=nil then if math.random(1,2)==1 then
+stat(l,"attack",1)
+end
+end
+end
