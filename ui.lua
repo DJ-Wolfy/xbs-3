@@ -11,7 +11,7 @@ if w.pressed("backslash")==1 then
 if sh==1 then table.insert(l,"|") else table.insert(l,"\\") end
 end
 if w.pressed("comma")==1 then
-if sh==1 then table.insert(l,"<") else table.insert(",") end
+if sh==1 then table.insert(l,"<") else table.insert(l,",") end
 end
 if w.pressed("apostrophe")==1 then
 if sh==1 then table.insert(l,'"') else table.insert(l,"'") end
