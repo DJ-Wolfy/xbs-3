@@ -62,7 +62,7 @@ end
 moves["run away"]={
 name="run away",
 play=function(l)
-stat(l,"speed",235)
+stat(l,"speed",35)
 stat(l,"attack",-4)
 stat(l,"defence",-5)
 if l.speed>200 then
