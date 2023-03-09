@@ -62,9 +62,9 @@ end
 moves["run away"]={
 name="run away",
 play=function(l)
-stat(l,"speed",25)
-stat(l,"attack",-6)
-stat(l,"defence",-7)
+stat(l,"speed",235)
+stat(l,"attack",-4)
+stat(l,"defence",-5)
 if l.speed>200 then
 speak(l.name.." is going too fast!")
 l.speed=200
@@ -423,3 +423,11 @@ stat(l,"attack",1)
 end
 end
 end
+moves["roar"]={
+name="roar",
+offensive=true,
+play=function(l,t)
+stat(l,"attack",2)
+stat(t,"attack",-2)
+end
+}
