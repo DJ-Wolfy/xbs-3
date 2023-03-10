@@ -464,7 +464,7 @@ r=mainmenu()
 if r==1 then modmenu(w,roster) end
 if r==2 then fight() end
 if r==3 then extras() end
-if r==4 then speak("thanks for playing!") wait(1000) mus.free() return 4 end
+if r==4 then speak("Are you sure you want to exit the game?") if runmenu(w,{"yes","no"})==1 then speak("thanks for playing!") wait(1000) mus.free() return 4 end end
 end
 end
 main()
