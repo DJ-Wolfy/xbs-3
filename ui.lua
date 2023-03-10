@@ -127,6 +127,12 @@ clicks.set_position(0)
 clicks.play()
 speak(mlist[pos])
 end
+if w.pressed("escape")==1 then
+pos=#mlist
+enters.set_position(0)
+enters.play()
+return pos
+end
 if w.pressed("enter") ==1 and pos>0 then
 enters.set_position(0)
 enters.play()
