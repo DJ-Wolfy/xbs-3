@@ -301,9 +301,14 @@ for i,j in pairs(playfield) do
 j.didnt_play=0
 end
 speak("Select a mode")
-mode=runmenu(w,{"classic mode"})
+modes={"classic mode","cancel fight and return to menu"}
+mode=runmenu(w,modes)
 if #playfield==0 then
 speak("You do not have any fighters. Cancelling.")
+return
+end
+if mode==#modes then
+speak("canceled")
 return
 end
 if mode==1 then
