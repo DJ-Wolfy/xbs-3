@@ -234,7 +234,7 @@ end
 --menu functions
 function extras()
 speak("Extras menu. Please select an option.")
-command=runmenu(w,{"update the game"})
+command=runmenu(w,{"update the game","back"})
 if command==1 then
 speak("By updating, you will lose any unsaved changes you've made, so make sure any moves and sounds you've added are backed up before you update to the new version of the game. If you're ready to update, click continue, otherwise click cancel.")
 if runmenu(w,{"continue","cancel"})==1 then
