@@ -440,8 +440,6 @@ name="mega bolt",
 sound="xsound/sb.ogg",
 offensive=true,
 play=function(l,t)
-t.health=1
-speak(t.name.."'s health reduced to 1!")
 stat(l,"SoulPower",t.health+(t.attack*10)+(t.defence*10)+(math.floor(t.speed/3)))
 stat(t,"attack",10)
 stat(t,"speed",40)
@@ -468,7 +466,7 @@ for i,j in ipairs(playfield) do
 target=j
 damage(math.random(l.SoulPower))
 end
-stat(l,"SoulPower",-60)
+stat(l,"SoulPower",-100)
 end
 end
 }
@@ -481,3 +479,52 @@ l.defence=0
 speak(l.name.."'s attack and defence are now neutral")
 end
 }
+moves["soul strike EX"]={
+name="soul strike EX",
+sound="osound/fire.wav",
+offensive=true,
+play=function(l,t)
+if l.SoulPower>0 then
+damage(l.SoulPower)
+stat(l,"SoulPower",-60)
+end
+end
+}
+moves["soul circle"]={
+name="soul circle",
+offensive=true,
+play=function(l,t)
+stat(l,"SoulPower",30)
+stat(t,"SoulPower",30)
+stat(t,"attack",3)
+end
+}
+moves["soul focus"]={
+name="soul focus",
+play=function(l)
+stat(l,"SoulPower",35)
+stat(l,"speed",-20)
+end
+}
+moves["channel power"]={
+name="channel power",
+play=function(l)
+if l.channel_power==nil then
+l.channel_power=1
+speak(l.name.." begins to channel their power!")
+else
+stat(l,"attack",-1)
+stat(l,"defence",-1)
+stat(l,"SoulPower",20)
+stat(l,"speed",-8)
+end
+end
+}
+turn_end_triggers["channel power"]=function(l)
+if l.channel_power==1 then
+stat(l,"attack",-1)
+stat(l,"defence",-1)
+stat(l,"SoulPower",20)
+stat(l,"speed",-8)
+end
+end
