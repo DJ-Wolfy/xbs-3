@@ -1,3 +1,6 @@
+turn_start_triggers["soul_fix"]=function(l)
+if l.SoulPower==nil then l.SoulPower=0 end
+end
 turn_start_triggers["balance"]=function(l)
 if l.balance~=nil and l.balance<0 then
 stat(l,"balance",1)
@@ -419,6 +422,7 @@ end
 }
 turn_end_triggers["bloodlust"]=function(l)
 if l.bloodlust~=nil then if math.random(1,2)==1 then
+speak(l.name.." is ready to fight!")
 stat(l,"attack",1)
 end
 end
@@ -429,5 +433,51 @@ offensive=true,
 play=function(l,t)
 stat(l,"attack",2)
 stat(t,"attack",-2)
+end
+}
+moves["mega bolt"]={
+name="mega bolt",
+sound="xsound/sb.ogg",
+offensive=true,
+play=function(l,t)
+t.health=1
+speak(t.name.."'s health reduced to 1!")
+stat(l,"SoulPower",t.health+(t.attack*10)+(t.defence*10)+(math.floor(t.speed/3)))
+stat(t,"attack",10)
+stat(t,"speed",40)
+end
+}
+moves["soul strike"]={
+name="soul strike",
+sound="osound/fire.wav",
+offensive=true,
+play=function(l,t)
+if l.SoulPower>0 then
+damage(math.random(1,l.SoulPower))
+stat(l,"SoulPower",-30)
+end
+end
+}
+moves["soul bomb"]={
+name="soul bomb",
+sound="osound/fire.wav",
+offensive=true,
+play=function(l,t)
+if l.SoulPower>0 then
+for i,j in ipairs(playfield) do
+target=j
+damage(math.random(l.SoulPower))
+end
+stat(l,"SoulPower",-60)
+end
+end
+}
+moves["soul exchange"]={
+name="soul exchange",
+play=function(l)
+stat(l,"SoulPower",(l.attack*15)+(l.defence*8))
+l.attack=0
+l.defence=0
+speak(l.name.."'s attack and defence are now neutral")
 end
 }
