@@ -528,3 +528,30 @@ stat(l,"SoulPower",20)
 stat(l,"speed",-8)
 end
 end
+moves["stunning blow"]={
+name="stunning blow",
+sound="xsound/jab.ogg",
+offensive=true,
+play=function(l,t)
+damage(math.random(4,8))
+stat(t,"speed",-16)
+stat(l,"attack",-2)
+end
+}
+moves["slow down"]={
+name="slow down",
+offensive=true,
+play=function(l,t)
+stat(t,"speed",-10)
+end
+}
+moves["intimidate"]={
+name="intimidate",
+offensive=true,
+play=function(l,t)
+stat(l,"attack",1)
+stat(t,"attack",-1)
+stat(l,"defence",1)
+stat(t,"defence",-1)
+end
+}
