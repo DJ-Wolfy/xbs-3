@@ -7,6 +7,9 @@ local l={}
 local letters={"1","2","3","4","5","6","7","8","9","0","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z"}
 local capletters={"!","@","#","$","%","^","&","*","(",")","A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","x","Y","Z"}
 local sh=w.held("lshift")
+if w.pressed("space")==1 then
+table.insert(l," ")
+end
 if w.pressed("backslash")==1 then
 if sh==1 then table.insert(l,"|") else table.insert(l,"\\") end
 end
