@@ -258,21 +258,21 @@ table.insert(mm,j.name)
 end
 table.insert(mm,"new...")
 table.insert(mm,"finished")
-local r=runmenu(w,mm)
-if r==#m+2 then
+local mf=runmenu(w,mm)
+if mf==#m+2 then
 f=io.open("roster.json","w")
 f:write(json.encode(roster))
 f:close()
 speak("Roster saved!")
 return
 end
-if r==#m+1 then
+if mf==#m+1 then
 nf=newfighter()
 table.insert(m,deepcopy(nf))
 modfighter(w,m[#m],roster,#m)
 end
-if r<#m+1 then
-modfighter(w,m[r],roster,r)
+if mf<#m+1 then
+modfighter(w,m[mf],roster,r)
 end
 end
 end
