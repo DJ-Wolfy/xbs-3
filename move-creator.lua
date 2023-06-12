@@ -1,0 +1,1 @@
+--this file contains functions for the move creator, including variables showing, menus and such
