@@ -52,7 +52,7 @@ math.randomseed(os.time())
 dofile("ui.lua")
 dofile("mus.lua")
 --metadatas variables
-version="0.1.1"
+version="0.1.2"
 --core functions
 --we don't want the normal wait, it's slow and don't support our game loops that we need
 wait=nil
