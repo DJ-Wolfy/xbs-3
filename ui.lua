@@ -44,6 +44,9 @@ clicks.volume,enters.volume=0.5,0.5
 editstring=""
 while true do
 w.loop()
+if w.held("lalt")==1 and w.pressed("f4")==1 then
+pyexec("raise Exception('The user pressed alt f4')")
+end
 local ll=letter(w)
 if ll[1]~=nil then speak(ll[1]) editstring=editstring..ll[1] clicks.set_position(0) clicks.play() end
 if w.pressed("enter")==1 then enters.set_position(0) enters.play() return editstring end
@@ -77,6 +80,9 @@ local t=0
 local did=false
 while true do
 w.loop()
+if w.held("lalt")==1 and w.pressed("f4")==1 then
+pyexec("raise Exception('The user pressed alt f4')")
+end
 if multistring~="" and elapsed()-multitimer>=0.15 then
 multistring=""
 end

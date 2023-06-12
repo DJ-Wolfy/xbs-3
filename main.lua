@@ -61,6 +61,9 @@ timetowait=timetowait/1000
 local e=elapsed()
 repeat
 w.loop()
+if w.held("lalt")==1 and w.pressed("f4")==1 then
+pyexec("raise Exception('The user pressed alt f4')")
+end
 if extra~=nil then
 local ex=extra()
 if ex=="skip" then return end
